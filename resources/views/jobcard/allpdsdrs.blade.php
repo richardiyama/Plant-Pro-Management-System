@@ -102,10 +102,15 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="example" style="width:100%">
+                            
+                                      
                                 <thead class=" text-primary">
-
+ 
                                     <th style="font-size: 20px" >
                                         Fleet No
+                                    </th>
+                                    <th style="font-size: 20px" >
+                                        Model
                                     </th>
                                     <th style="font-size: 20px">
                                         Hour-Meter Reading(First Day)
@@ -126,628 +131,129 @@
                                         Location
                                     </th>
 
-
+<caption style="font-size: 20px;display: table-caption;text-align: center"><?php echo "FUEL CONSUMPTION REPORT (FROM: $start TO: $end)" ?> </caption>
                                 </thead>
 
                                 <tbody>
 
                                     @foreach($allpdsdr as $fuel)
-                                    @if($location == $fuel->location)
-                                     <tr>
-
-
-                                        <td style="font-size: 20px">
-                                      {{ $fuel->fleet_no }}
-                                         
-                                        </td>
-
-                                        <td style="font-size: 20px">
-
-                                            <?php
-                                           
-                                        $first =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $start)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-                                           //dd($first->hour_meter_reading);
-                                          
-                                          if($first)
-                                          {
-                                           echo $first->hour_meter_reading;
-                                          }
-
-                                          if($first == null)
-                                          {
-                                               $take = DB::table('pdsdrs')->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->select('pdsdrs.hour_meter_reading')->first();
-                                               if($take)
-                                               {
-                                                
-                                           echo $take->hour_meter_reading;
-                                               }
-                                          }
-                                           
-                                         ?>
-                                        </td>
-                                        <td style="font-size: 20px">
-
-                                            <?php
-                                           $second =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $end)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-                                           if($second)
-                                           {
-                                              
-                                           echo (int)$second->hour_meter_reading;
-                                               
-                                           }
-
-                                            if($second == null)
-                                           {
-                                              
-                                           echo 0;
-                                               
-                                           }
-                                         ?>
-                                        </td>
-
-
-                                        <td style="font-size: 20px" >
-                                        <?php
-                                        $pdsdr =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
-                                       if($pdsdr != 0)
-                                       {
-                                        echo $pdsdr ;
-                                       }
-?>                                      
-                                        </td>
-                                        <td style="font-size: 20px">
-                                        <?php
-  
-                              
-                                        $first =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $start)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-
- $second =   DB::table('pdsdrs')
- ->where('pdsdrs.date_entry','=', $end)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-
-$pdsdr =  DB::table('pdsdrs')
-->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
-//dd($second);
-//dd((int)($second->hour_meter_reading));
-
-
-
-if($second && $first  )
-{
-$result = ((int)($second->hour_meter_reading)) - ((int)($first->hour_meter_reading));
-  
-       
-   
-    if($result > 0){
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / $result;  
-   
-    }
-
-
-                    
-}                   
-                        
-    if(($first == null) && ($second != null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   if((int)($second->hour_meter_reading) > 0)
-   {
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / ((int)($second->hour_meter_reading));  
-   }
-
-   
-   
-    } 
-
-
-   if(($first != null) && ($second == null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   if((int)($first->hour_meter_reading) > 0)
-   {
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / ((int)($first->hour_meter_reading));  
-   }
-
-   
-   
-
-   
-    } 
-
-     
-   if(($first == null) && ($second == null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   
-         
-      echo  0;  
-   
-
-   
-   
-
-   
-    } 
-
-                                           
-
-
-   ?>
-                                        </td>
-
-
-
-
-
-                                    </tr>
-                                    @endif
-                                   @if($fleet == $fuel->fleet_no)
+                                 
+                                    
+                                      
                                    
                                     <tr>
 
-
+                                    
                                         <td style="font-size: 20px">
-                                      {{ $fuel->fleet_no }}
+                                        <?php
+                                         $first =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->first();
+
                                          
-                                        </td>
-
-                                        <td style="font-size: 20px">
-
-                                            <?php
-                                           
-                                        $first =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $start)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-                                           //dd($first->hour_meter_reading);
-                                          
-                                          if($first)
-                                          {
-                                           echo $first->hour_meter_reading;
-                                          }
-
-                                          if($first == null)
-                                          {
-                                           echo 0;
-                                          }
-                                           
-                                         ?>
-                                        </td>
-                                        <td style="font-size: 20px">
-
-                                            <?php
-                                           $second =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $end)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-                                           if($second)
-                                           {
-                                              
-                                           echo (int)$second->hour_meter_reading;
-                                               
-                                           }
-
-                                            if($second == null)
-                                           {
-                                              
-                                           echo 0;
-                                               
-                                           }
-                                         ?>
-                                        </td>
-
-
-                                        <td style="font-size: 20px" >
-                                        <?php
-                                        $pdsdr =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
-                                       if($pdsdr != 0)
-                                       {
-                                        echo $pdsdr ;
-                                       }
-?>                                      
-                                        </td>
-                                        <td style="font-size: 20px">
-                                        <?php
-  
-                              
-                                        $first =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $start)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-
- $second =   DB::table('pdsdrs')
- ->where('pdsdrs.date_entry','=', $end)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-
-$pdsdr =  DB::table('pdsdrs')
-->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
-//dd($second);
-//dd((int)($second->hour_meter_reading));
-
-
-
-if($second && $first  )
-{
-$result = ((int)($second->hour_meter_reading)) - ((int)($first->hour_meter_reading));
-  
-       
-   
-    if($result > 0){
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / $result;  
-   
-    }
-
-
-                    
-}                   
-                        
-    if(($first == null) && ($second != null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   if((int)($second->hour_meter_reading) > 0)
-   {
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / ((int)($second->hour_meter_reading));  
-   }
-
-   
-   
-    } 
-
-
-   if(($first != null) && ($second == null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   if((int)($first->hour_meter_reading) > 0)
-   {
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / ((int)($first->hour_meter_reading));  
-   }
-
-   
-   
-
-   
-    } 
-
-     
-   if(($first == null) && ($second == null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   
-         
-      echo  0;  
-   
-
-   
-   
-
-   
-    } 
-
-                                           
-
-
-   ?>
-                                        </td>
-
-
-
-
-
-                                    </tr>
-                                    @endif
-                                     @if(($fleet == $fuel->fleet_no) && ($location == $fuel->location))
-                                   
-                                    <tr>
-
-
-                                        <td style="font-size: 20px">
-                                      {{ $fuel->fleet_no }}
+                                         if($first)
+                                         {
+                                        echo $first->fleet_no;
+                                         }
                                          
+                                        ?>
+                                     
                                         </td>
-
+                                    <td style="font-size: 20px">
+                                    <?php
+                                     $first =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->first();
+               if($first)
+               {
+       $check = DB::table('equipmentmasterlist')->where('equipmentmasterlist.fleet_no','=', $first->fleet_no)->orderby('equipmentmasterlist.fleet_no')->first();
+       if($check)
+       {
+         echo  $check->model;
+       }
+               }
+                                    ?>
+                                      
+                                        </td>
                                         <td style="font-size: 20px">
 
                                             <?php
                                            
-                                        $first =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $start)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-                                           //dd($first->hour_meter_reading);
-                                          
-                                          if($first)
-                                          {
-                                           echo $first->hour_meter_reading;
-                                          }
-
-                                          if($first == null)
-                                          {
-                                           echo 0;
-                                          }
-                                           
+                                           $first =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->first();
+                                         if($first)
+                                         {
+                                        echo $first->hour_meter_reading;
+                                         }
+                                         
                                          ?>
                                         </td>
                                         <td style="font-size: 20px">
 
                                             <?php
-                                           $second =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $end)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
+                                            $second =   DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry','DESC')->first();
                                            if($second)
-                                           {
-                                              
-                                           echo (int)$second->hour_meter_reading;
-                                               
-                                           }
-
-                                            if($second == null)
-                                           {
-                                              
-                                           echo 0;
-                                               
-                                           }
+                                         {
+                                        echo $second->hour_meter_reading;
+                                         }
+                                          
                                          ?>
                                         </td>
 
 
                                         <td style="font-size: 20px" >
                                         <?php
-                                        $pdsdr =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
-                                       if($pdsdr != 0)
+                                        
+                                        $pdsdr =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
+                                       if($pdsdr)
                                        {
-                                        echo $pdsdr ;
-                                       }
-?>                                      
-                                        </td>
-                                        <td style="font-size: 20px">
-                                        <?php
-  
-                              
-                                        $first =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $start)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-
- $second =   DB::table('pdsdrs')
- ->where('pdsdrs.date_entry','=', $end)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-
-$pdsdr =  DB::table('pdsdrs')
-->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
-//dd($second);
-//dd((int)($second->hour_meter_reading));
-
-
-
-if($second && $first  )
-{
-$result = ((int)($second->hour_meter_reading)) - ((int)($first->hour_meter_reading));
-  
-       
-   
-    if($result > 0){
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / $result;  
-   
-    }
-
-
-                    
-}                   
-                        
-    if(($first == null) && ($second != null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   if((int)($second->hour_meter_reading) > 0)
-   {
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / ((int)($second->hour_meter_reading));  
-   }
-
-   
-   
-    } 
-
-
-   if(($first != null) && ($second == null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   if((int)($first->hour_meter_reading) > 0)
-   {
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / ((int)($first->hour_meter_reading));  
-   }
-
-   
-   
-
-   
-    } 
-
-     
-   if(($first == null) && ($second == null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   
-         
-      echo  0;  
-   
-
-   
-   
-
-   
-    } 
-
-                                           
-
-
-   ?>
-                                        </td>
-
-
-
-
-
-                                    </tr>
-                                    @endif
-                                       @if(($fleet == null) && ($location == null))
                                    
-                                    <tr>
+  
 
-
-                                        <td style="font-size: 20px">
-                                      {{ $fuel->fleet_no}}
-                                        </td>
-
-                                        <td style="font-size: 20px">
-
-                                            <?php
-                                           
-                                        $first =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $start)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-                                           //dd($first->hour_meter_reading);
-                                          
-                                          if($first)
-                                          {
-                                           echo $first->hour_meter_reading;
-                                          }
-
-                                          if($first == null)
-                                          {
-                                             $take = DB::table('pdsdrs')->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->select('pdsdrs.hour_meter_reading')->first();
-                                               if($take)
-                                               {
-                                                
-                                           echo $take->hour_meter_reading;
-                                               }
-                                          }
-                                           
-                                         ?>
-                                        </td>
-                                        <td style="font-size: 20px">
-
-                                            <?php
-                                           $second =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $end)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
-                                           if($second)
-                                           {
-                                              //dd((int)$second->hour_meter_reading);
-                                           echo (int)$second->hour_meter_reading;
-                                               
-                                           }
-
-                                            if($second == null)
-                                           {
-                                              
-                                             $take2 = DB::table('pdsdrs')->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->latest('pdsdrs.date_entry')->select('pdsdrs.hour_meter_reading')->first();
-                                               if($take2)
-                                               {
-                                                
-                                           echo $take->hour_meter_reading;
-                                               }
-                                               
-                                           }
-                                         ?>
-                                        </td>
-
-
-                                        <td style="font-size: 20px" >
-                                        <?php
-                                        $pdsdr =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
-                                       if($pdsdr != 0)
-                                       {
+                                           //dd($pdsdr);
                                         echo $pdsdr ;
                                        }
+                                       
+
 ?>                                      
                                         </td>
                                         <td style="font-size: 20px">
                                         <?php
   
-                              
-                                        $first =   DB::table('pdsdrs')
-                                           ->where('pdsdrs.date_entry','=', $start)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
+                                       
+                                   $firstnull =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->first();
+                                          
+                                         
+                                             
 
- $second =   DB::table('pdsdrs')
- ->where('pdsdrs.date_entry','=', $end)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->select('pdsdrs.hour_meter_reading')->first();
+                                            $secondnull = DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry','DESC')->first();
+                                          
+                                         
+                                            
 
-$pdsdr =  DB::table('pdsdrs')
-->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
+
+$pdsdr =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
 //dd($pdsdr);
 //dd((int)($second->hour_meter_reading));
 
+        if($firstnull && $secondnull && $pdsdr)
+    {
 
-
-if($second && $first  )
-{
-$result = ((int)($second->hour_meter_reading)) - ((int)($first->hour_meter_reading));
+$result = ((int)($secondnull->hour_meter_reading)) - ((int)($firstnull->hour_meter_reading));
   
        
    
     if($result > 0){
-         
+        
       echo  $fuelConsumption = ((int)$pdsdr) / $result;  
    
     }
-
+     
 
                     
-}                   
+}         
+    
                         
-    if(($first == null) && ($second != null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-$take = DB::table('pdsdrs')->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->select('pdsdrs.hour_meter_reading')->first();
-      //$take2 = DB::table('pdsdrs')->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->latest('pdsdrs.date_entry')->select('pdsdrs.hour_meter_reading')->first();
-
-                                       if($take && $second )
-{
-$result = ((int)($second->hour_meter_reading)) - ((int)($take->hour_meter_reading));
-  
-       //dd($second);
    
-    if($result > 0){
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / $result;  
-   
-    }
 
 
                     
-}             
+         
    
    //if((int)($second->hour_meter_reading) > 0)
    //{
@@ -757,27 +263,13 @@ $result = ((int)($second->hour_meter_reading)) - ((int)($take->hour_meter_readin
 
    
    
-    } 
-
-
-   if(($first != null) && ($second == null))
-{
-
-  
-     //dd( ((int)$pdsdr));
-
-   
-   if((int)($first->hour_meter_reading) > 0)
-   {
-         
-      echo  $fuelConsumption = ((int)$pdsdr) / ((int)($first->hour_meter_reading));  
-   }
+    
 
    
    
 
    
-    } 
+    
 
      
  
@@ -789,15 +281,25 @@ $result = ((int)($second->hour_meter_reading)) - ((int)($take->hour_meter_readin
    </td>
    <td style="font-size: 20px; text-align:center">
    <?php
-    $hourly = DB::table('equipmentmasterlist')->where('fleet_no','=', $fuel->fleet_no)->first();
-    if($hourly)
-    {
-        $hourlyconsumption = DB::table('consumptions')->where('type_code','=', $hourly->type_code)->first();
-        if($hourlyconsumption)
-        {
-           echo $hourlyconsumption->hourly_average_consumption;
-        }
-    }
+     
+                                         
+        $hourlyconsumption = DB::table('consumptions')->get();
+        $first =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->first();
+               if($first && $hourlyconsumption)
+               {
+       $check = DB::table('equipmentmasterlist')->where('equipmentmasterlist.fleet_no','=', $first->fleet_no)->orderby('equipmentmasterlist.fleet_no')->first();
+            foreach($hourlyconsumption as $vals)
+            {
+               
+                if($check && $vals->model == $check->model)
+                {
+           echo $vals->hourly_average_consumption;
+                }
+                 
+               
+            }
+               }
+             
    ?>
    
    </td>
@@ -805,12 +307,20 @@ $result = ((int)($second->hour_meter_reading)) - ((int)($take->hour_meter_readin
                                         
 
                    <td style="font-size: 20px">
-                   {{ $fuel->location }}
+                   <?php
+                    $first =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->first();
+               if($first)
+               {
+                  echo $first->location;
+               }
+               
+                   ?>
+                   
                   </td>
 
 
                                     </tr>
-                                    @endif
+                                    
                                     @endforeach
                        
                                 </tbody>

@@ -104,27 +104,135 @@ $end  = $request->get('end_date');
 $fleet = $request->get('fleet_no');
 $location = $request->get('location');
 
+//DB::table('equipmentmasterlist')->orderby('equipmentmasterlist.fleet_no')
 
+$allpdsdr = DB::table('equipmentmasterlist')->orderby('equipmentmasterlist.fleet_no')->get();
 
-$allpdsdrs = DB::table('pdsdrs')
-->whereBetween('pdsdrs.date_entry', [$request->get('start_date'), $request->get('end_date')])
-->orderby('pdsdrs.fleet_no')->get();
-
-$result = array_column($allpdsdrs->toArray(), 'id');
-$results = DB::table('pdsdrs')
-->whereNotIn('id',$result)->get();
+//$result = array_column($allpdsdrs->toArray(), 'id');
+//$results = DB::table('pdsdrs')
+//->whereNotIn('id',$result)->get();
 
 //$equipment = DB::table('pdsdr_date_reports')->join('pdsdr_date_reports','pdsdrs.date_entry','=','pdsdr_date_reports.date_entry')->get();
 
 //dd($results);
 
-$allpdsdr = $results;
+//$allpdsdr = $results;
+
+foreach($allpdsdr  as $fuel)
+
+{
+$first =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry')->first();
+$second =   DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->orderby('pdsdrs.date_entry','DESC')->first();
+$pdsdr =  DB::table('pdsdrs')->whereBetween('pdsdrs.date_entry', [$start, $end])->where('pdsdrs.location',$location)->where('pdsdrs.fleet_no','=', $fuel->fleet_no)->sum('fuel_quantity');
+$hourlyconsumption = DB::table('consumptions')->get();
+if($first && $second && $pdsdr  && $hourlyconsumption)
+{
+    
+    $result = ((int)($second->hour_meter_reading)) - ((int)($first->hour_meter_reading));
+
+
+    //$checks = DB::table('equipmentmasterlist')->where('equipmentmasterlist.fleet_no','=', $first->fleet_no)->orderby('equipmentmasterlist.fleet_no')->first();
+   
+    
+    
+    
+
+$check = DB::table('equipmentmasterlist')->where('equipmentmasterlist.fleet_no','=', $first->fleet_no)->orderby('equipmentmasterlist.fleet_no')->first();
+foreach($hourlyconsumption as $vals)
+{
+if($check && $result > 0 && $vals->model == $check->model)
+{
+    DB::table('fuel_consumption')->insert([
+        'model' => $check->model,
+'hour_meter_reading_first' => $first->hour_meter_reading,
+ 'theorectical' => $vals->hourly_average_consumption,
+
+'average_consumption' => $fuelConsumption = ((int)$pdsdr) / $result,  
+  'location' => $first->location,
+'hour_meter_reading_second' => $second->hour_meter_reading,
+'fleet_no' => $first->fleet_no,
+
+
+//dd($pdsdr);
+'total_fuel_quantity'=> $pdsdr 
+
+    ]);
+
+
+}
+
+
+}
+  
 
 
 
 
 
 
+ 
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//if((int)($second->hour_meter_reading) > 0)
+//{
+
+///echo  $fuelConsumption = ((int)$pdsdr) / ((int)($second->hour_meter_reading));  
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+}
+}
 
 //$first = DB::table('pdsdrs')->join('pdsdr_date_reports','pdsdrs.created_at','=','pdsdr_date_reports.created_at')->where('pdsdr_date_reports.date_entry','=', $request->get('start_date'))->get();
 

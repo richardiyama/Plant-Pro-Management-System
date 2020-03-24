@@ -183,6 +183,7 @@
                       // }
                    },
                    {
+                       title: 'PLANT MANAGEMENT SYSTEM',
                        extend: 'pdfHtml5',
                        
                        text: 'Export to PDF'
